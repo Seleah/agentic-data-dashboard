@@ -48,3 +48,6 @@ quantity × unit\_price × (1 − discount\_pct / 100)
 ```
 - Returns should be subtracted from sales when calculating net revenue.
 - The data-quality test file intentionally includes invalid records; it should not be treated as clean production data.
+
+## License
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
