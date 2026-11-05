@@ -49,5 +49,53 @@ quantity × unit\_price × (1 − discount\_pct / 100)
 - Returns should be subtracted from sales when calculating net revenue.
 - The data-quality test file intentionally includes invalid records; it should not be treated as clean production data.
 
+## Local PostgreSQL database
+
+The project uses Docker Compose to run PostgreSQL locally. Copy the example environment file and set your local database values in `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Start the database:
+
+```bash
+docker compose up -d db
+docker compose ps
+```
+
+The database is available on localhost at the host port set by POSTGRES_PORT in .env (for example, 5433). Containers in the Compose network connect to the database service at db:5432.
+
+Stop the database without deleting its data:
+
+```bash
+docker compose down
+```
+
+To delete the database volume and all data stored in it:
+
+```bash
+docker compose down -v
+```
+
+## Database schema
+
+The PostgreSQL schema stores the synthetic retail data in related tables:
+
+- `stores` contains store records.
+- `categories` contains product categories.
+- `products` references a category.
+- `transactions` references a store and product.
+
+Foreign keys connect these records, and constraints enforce rules such as unique transaction IDs, positive quantities and prices, valid discounts, and allowed transaction types.
+
+To create the tables, start the database with Docker Compose and run:
+
+```bash
+docker compose up -d db
+docker compose exec -T db sh -c 'psql -v ON\_ERROR\_STOP=1 -U "\$POSTGRES\_USER" -d "\$POSTGRES\_DB"' < db/001\_create\_transactions.sql
+```
+This creates the schema; CSV validation and importing are planned.
+
 ## License
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
