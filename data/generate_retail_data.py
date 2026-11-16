@@ -131,32 +131,25 @@ write_csv(CLEAN_FILE, clean_rows)
 dirty_rows = [row.copy() for row in clean_rows]
 dirty_rows.extend([
     # Invalid date
-    {**make_row(900001), "transaction_id": "BAD_DATE",
-     "transaction_date": "2025-19-45"},
+    {**make_row(005001), "transaction_date": "2025-19-45"},
 
     # Missing required store ID
-    {**make_row(900002), "transaction_id": "MISSING_STORE",
-     "store_id": ""},
+    {**make_row(005002), "store_id": ""},
 
     # Invalid quantity: zero
-    {**make_row(900003), "transaction_id": "ZERO_QUANTITY",
-     "quantity": 0},
+    {**make_row(005003), "quantity": 0},
 
     # Invalid price: negative
-    {**make_row(900004), "transaction_id": "NEGATIVE_PRICE",
-     "unit_price": "-12.50"},
+    {**make_row(005004), "unit_price": "-12.50"},
 
     # Unknown category
-    {**make_row(900005), "transaction_id": "UNKNOWN_CATEGORY",
-     "category": "Mystery"},
+    {**make_row(005005), "category": "Mystery"},
 
     # Invalid transaction type
-    {**make_row(900006), "transaction_id": "BAD_TYPE",
-     "transaction_type": "exchange"},
+    {**make_row(005006), "transaction_type": "exchange"},
 
     # Malformed numeric field
-    {**make_row(900007), "transaction_id": "BAD_PRICE_FORMAT",
-     "unit_price": "not-a-price"},
+    {**make_row(005007), "unit_price": "not-a-price"},
 
     # Duplicate transaction ID: duplicate of the first clean row
     clean_rows[0].copy(),
