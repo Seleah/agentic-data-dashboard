@@ -129,33 +129,30 @@ write_csv(CLEAN_FILE, clean_rows)
 # Copy clean rows and add intentionally invalid records.
 # Keep this file separate so it is never mistaken for clean production data.
 dirty_rows = [row.copy() for row in clean_rows]
-dirty_rows.extend([
-    # Invalid date
-    {**make_row(005001), "transaction_date": "2025-19-45"},
 
-    # Missing required store ID
-    {**make_row(005002), "store_id": ""},
+error_mutations = [
+    {"transaction_date": "2025-19-45"},  # Invalid date
+    {"store_id": ""},                    # Missing required store ID
+    {"quantity": 0},                     # Invalid quantity: zero
+    {"unit_price": "-12.50"},            # Invalid price: negative
+    {"category": "Mystery"},             # Unknown category
+    {"transaction_type": "exchange"},    # Invalid transaction type
+    {"unit_price": "not-a-price"},       # Invalid price: string
+]
 
-    # Invalid quantity: zero
-    {**make_row(005003), "quantity": 0},
+available_indices = list(range(1, len(dirty_rows)))
+chosen_indices = random.sample(available_indices, len(error_mutations) + 1)
 
-    # Invalid price: negative
-    {**make_row(005004), "unit_price": "-12.50"},
+# Use the last chosen index to overwrite an existing row with a duplicate of row 0
+duplicate_idx = chosen_indices.pop()
 
-    # Unknown category
-    {**make_row(005005), "category": "Mystery"},
+# replace valid data with invalid data
+for idx, mutation in zip(chosen_indices, error_mutations):
+    dirty_rows[idx].update(mutation)
 
-    # Invalid transaction type
-    {**make_row(005006), "transaction_type": "exchange"},
+# add duplicate transaction
+dirty_rows.insert(duplicate_idx, clean_rows[0].copy())
 
-    # Malformed numeric field
-    {**make_row(005007), "unit_price": "not-a-price"},
-
-    # Duplicate transaction ID: duplicate of the first clean row
-    clean_rows[0].copy(),
-])
-
-random.shuffle(dirty_rows)
 write_csv(ISSUES_FILE, dirty_rows)
 
 print(f"Created {CLEAN_FILE} with {len(clean_rows)} valid rows.")
