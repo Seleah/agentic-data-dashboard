@@ -1,5 +1,6 @@
 CREATE TABLE stores (
-    store_id VARCHAR(5) PRIMARY KEY
+    store_id VARCHAR(5) PRIMARY KEY,
+    store_state VARCHAR(2) NOT NULL CHECK (char_length(store_state) = 2)
 );
 
 CREATE TABLE categories (
@@ -9,6 +10,7 @@ CREATE TABLE categories (
 
 CREATE TABLE products (
     product_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    source_product_id VARCHAR(5) NOT NULL UNIQUE CHECK (char_length(source_product_id) = 5),
     product_name TEXT NOT NULL UNIQUE,
     category_id INTEGER NOT NULL REFERENCES categories(category_id)
 );
